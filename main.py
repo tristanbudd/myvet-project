@@ -1,7 +1,7 @@
 # MyVet Invoicing System
 # Tristan Budd
-# 03/03/2023
-# Last Update: Creating Program
+# 08/03/2023
+# Last Update: Mostly Finished Creating Items
 
 from datetime import date
 import time
