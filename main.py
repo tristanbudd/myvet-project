@@ -185,12 +185,12 @@ def create_invoice():
                                 print("*" * 85)
                                 print("\n\nINVOICE\n")
                                 print("*" * 85)
-                                print("\n\nCustomer: ", df["Customer Name"].loc[data.index[0]], "\n\nPet Name: ", df["Pet Name"].loc[data.index[0]], "\n")
+                                print("\n\nCustomer: ", df["Customer Name"].loc[df.index[0]], "\n\nPet Name: ", df["Pet Name"].loc[df.index[0]], "\n")
                                 print("*" * 85)
                                 print(df[["ITEM", "DESCRIPTION", "QUANTITY", "PRICE", "TOTAL"]].iloc[1:].to_string(index=False))
                                 print("*" * 85)
-                                vat = df["TOTAL"].sum() * 0.20
-                                total = df["TOTAL"].sum() + vat
+                                vat = float(df["TOTAL"].sum()) * 0.20
+                                total = float(df["TOTAL"].sum)() + vat
                                 print("Subtotal: ", df["TOTAL"].sum(), "\nVAT: ", vat, "\nInvoice Total: ", total)
                                 print("\nChoose from the following:\n\tX - Exit & Save\n\tC - Continue Editing Items")
                                 while 1:
