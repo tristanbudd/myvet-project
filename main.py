@@ -140,14 +140,18 @@ def create_invoice():
                                     "QUANTITY": int(item_quantity_input),
                                     "PRICE": item_cost_input,
                                     "TOTAL": item_cost_input * int(item_quantity_input),
+                                    "TOTALRAW": item_cost_input * int(item_quantity_input),
                                 }
                                 item_data = pd.DataFrame(data, index=[int(item_id)])
                                 item_data["ITEM"] = item_data["ITEM"].astype(int)
                                 item_data["ITEM"] = item_data["ITEM"].map("{:.0f}".format)
                                 item_data["QUANTITY"] = item_data["QUANTITY"].astype(int)
                                 item_data["QUANTITY"] = item_data["QUANTITY"].map("{:.0f}".format)
+                                item_data["PRICE"] = item_data["PRICE"].astype(float)
                                 item_data["PRICE"] = item_data["PRICE"].map("£{:,.2f}".format)
+                                item_data["TOTAL"] = item_data["TOTAL"].astype(float)
                                 item_data["TOTAL"] = item_data["TOTAL"].map("£{:,.2f}".format)
+                                item_data["TOTALRAW"] = item_data["TOTALRAW"].astype(float)
                                 df = pd.concat([df, item_data], ignore_index=True)
                                 item_id = item_id + 1
                                 item_amount = item_amount + 1
@@ -182,16 +186,20 @@ def create_invoice():
                                 break
                             elif invoice_items_input == "S":
                                 os.system('cls')
+                                if item_amount == 0:
+                                    print("Error: There are no items to show, Returning to Item Menu...")
+                                    time.sleep(3)
+                                    break
+                                total_conversion = pd.Series(df['TOTALRAW'].iloc[1:].sum())
+                                total_conversion = float(total_conversion)
                                 print("*" * 85)
                                 print("\n\nINVOICE\n")
                                 print("*" * 85)
-                                print("\n\nCustomer: ", df["Customer Name"].loc[df.index[0]], "\n\nPet Name: ", df["Pet Name"].loc[df.index[0]], "\n")
+                                print("\nCustomer: ", df["Customer Name"].loc[df.index[0]], "\n\nPet Name: ", df["Pet Name"].loc[df.index[0]], "\n")
                                 print("*" * 85)
                                 print(df[["ITEM", "DESCRIPTION", "QUANTITY", "PRICE", "TOTAL"]].iloc[1:].to_string(index=False))
                                 print("*" * 85)
-                                vat = float(df["TOTAL"].sum()) * 0.20
-                                total = float(df["TOTAL"].sum)() + vat
-                                print("Subtotal: ", df["TOTAL"].sum(), "\nVAT: ", vat, "\nInvoice Total: ", total)
+                                print("Subtotal: £{:.0f}\nVAT: £{:.0f}\nInvoice Total: £{:.0f}".format(total_conversion, total_conversion * 0.2, total_conversion * 1.2))
                                 print("\nChoose from the following:\n\tX - Exit & Save\n\tC - Continue Editing Items")
                                 while 1:
                                     invoice_complete_input = input("Input Option: ")
