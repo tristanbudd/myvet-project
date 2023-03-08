@@ -14,7 +14,7 @@ def main():
     # This is the main menu selection system, Inputs a string, makes uppercase and goes to the target area.
     os.system('cls')
     print("""MYVET INVOICING SYSTEM\n\nToday's Date: """, date.today(), """\n\nChoose from the following:
-    I - Create Invoice\n\tV - View Transaction\n\tX - To Exit""")
+    I - Create Invoice\n    V - View Transaction\n    X - To Exit""")
     while 1:
         main_menu_input = input("Input Option: ")
         main_menu_input = main_menu_input.upper()
@@ -72,6 +72,7 @@ def create_invoice():
                     data = {
                         "Customer Name": customer_name,
                         "Pet Name": pet_name,
+                        "Date Of Form": date,
                     }
                     customer_data = pd.DataFrame(data, index = [0])
                     df = pd.concat([df, customer_data], ignore_index=True, sort=False)
@@ -155,6 +156,9 @@ def create_invoice():
                                 print("\nEnter which item you would like to remove:")
                                 while 1:
                                     item_remove_input = input("Item: ")
+                                    df.loc[df.index > item_remove_input, "ITEM"] = df.loc[df.index > item_remove_input, "ITEM"] - 1
+                                    item_id = item_id - 1
+                                    item_amount = item_amount - 1
                             elif invoice_items_input == "S":
                                 print("test")
                             else:
