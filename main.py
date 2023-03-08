@@ -81,9 +81,9 @@ def create_invoice():
                               """Items )\n\tR - Remove Item\n\tS - Save & Continue""")
                         if item_amount > 0:
                             print("\n")
-                            print("*" * 100)
+                            print("*" * 70)
                             print(df[["ITEM", "DESCRIPTION", "QUANTITY", "PRICE", "TOTAL"]].iloc[1:].to_string(index=False))
-                            print("*" * 100)
+                            print("*" * 70)
                         while 1:
                             invoice_items_input = input("Input Option: ")
                             invoice_items_input = invoice_items_input.upper()
