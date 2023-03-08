@@ -78,13 +78,13 @@ def create_invoice():
                     df = pd.concat([df, customer_data], ignore_index=True, sort=False)
                     while 1:
                         os.system('cls')
-                        print("""\nChoose from the following, then save to continue:\n\tA - Add Item (""", item_amount,
-                              """Items )\n\tR - Remove Item\n\tS - Save & Continue""")
                         if item_amount > 0:
                             print("\n")
-                            print("*" * 70)
+                            print("*" * 85)
                             print(df[["ITEM", "DESCRIPTION", "QUANTITY", "PRICE", "TOTAL"]].iloc[1:].to_string(index=False))
-                            print("*" * 70)
+                            print("*" * 85)
+                        print("""\nChoose from the following, then save to continue:\n\tA - Add Item (""", item_amount,
+                              """Items )\n\tR - Remove Item\n\tS - Save & Continue""")
                         while 1:
                             invoice_items_input = input("Input Option: ")
                             invoice_items_input = invoice_items_input.upper()
@@ -153,16 +153,57 @@ def create_invoice():
                                 item_amount = item_amount + 1
                                 break
                             elif invoice_items_input == "R":
+                                if item_amount == 0:
+                                    print("Error: There are no items to remove, Returning to Item Menu...")
+                                    time.sleep(3)
+                                    break
                                 print("\nEnter which item you would like to remove:")
                                 while 1:
-                                    item_remove_input = input("Item: ")
-                                    df.loc[df.index > item_remove_input, "ITEM"] = df.loc[df.index > item_remove_input, "ITEM"] - 1
-                                    item_id = item_id - 1
-                                    item_amount = item_amount - 1
+                                    while 1:
+                                        item_remove_input = input("Item ID: ")
+                                        if item_remove_input.isnumeric():
+                                            item_remove_input = int(item_remove_input)
+                                            if item_remove_input <= 0:
+                                                print("Error: Number must be greater than 0, As there is no items stored here, Please Try Again...")
+                                                break
+                                            elif item_remove_input > item_amount:
+                                                print("Error: There is not this many entries, Please enter a lower number")
+                                                break
+                                            df.drop(df[df["ITEM"] == item_remove_input].index)
+                                            # df.loc[df.index > item_remove_input, "ITEM"] = df.loc[df.index > item_remove_input, "ITEM"] - 1
+                                            item_id = item_id - 1
+                                            item_amount = item_amount - 1
+                                            print("Sucessfully removed item:", item_remove_input, ", Returning to Item Menu...")
+                                            time.sleep(2)
+                                            break
+                                        else:
+                                            print("Error: This must be a number, Please Try Again...")
+                                    break
+                                break
                             elif invoice_items_input == "S":
-                                print("test")
+                                os.system('cls')
+                                print("*" * 85)
+                                print("\n\nINVOICE\n")
+                                print("*" * 85)
+                                print("\n\nCustomer: ", df["Customer Name"].loc[data.index[0]], "\n\nPet Name: ", df["Pet Name"].loc[data.index[0]], "\n")
+                                print("*" * 85)
+                                print(df[["ITEM", "DESCRIPTION", "QUANTITY", "PRICE", "TOTAL"]].iloc[1:].to_string(index=False))
+                                print("*" * 85)
+                                vat = df["TOTAL"].sum() * 0.20
+                                total = df["TOTAL"].sum() + vat
+                                print("Subtotal: ", df["TOTAL"].sum(), "\nVAT: ", vat, "\nInvoice Total: ", total)
+                                print("\nChoose from the following:\n\tX - Exit & Save\n\tC - Continue Editing Items")
+                                while 1:
+                                    invoice_complete_input = input("Input Option: ")
+                                    if invoice_items_input == "X":
+                                        # Saving data & Returning to Main Menu
+                                        return
+                                    elif invoice_items_input == "C":
+                                        break
+                                    else:
+                                        print("Error: Invalid Input, Please Try Again...")
                             else:
-                                print("test")
+                                print("Error: Invalid Input, Please Try Again...")
                 else:
                     print("\nError: Ensure you have set both a Customer Name & a Pet Name Before Continuing...")
                     print("Returning to the Basic Information Menu...")
