@@ -260,7 +260,7 @@ def create_invoice():
 def view_transaction():
     print("*" * 85)
     df = pd.read_csv("data.csv")
-    print(df[["DATE", "CUSTOMER NAME", "SUBTOTAL", "VAT", "INVOICE TOTAL"]].iloc[:1].to_string(index=False))
+    print(df[["DATE", "CUSTOMER NAME", "SUBTOTAL", "VAT", "INVOICE TOTAL"]].dropna().to_string(index=False))
     print("*" * 85)
     input()
     print("Returning To Main Menu...")
