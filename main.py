@@ -1,7 +1,8 @@
 # MyVet Invoicing System
 # Tristan Budd
-# 08/03/2023
-# Last Update: Creating invoices done
+# 09/03/2023
+# Last Update: Creating Invoices & Viewing Screens Done
+# If screen isn't clearing you need to run the file in the normal python.exe
 
 from datetime import date
 import time
@@ -12,9 +13,10 @@ import pandas as pd
 def main():
     while 1:
         # This is the main menu selection system, Inputs a string, makes uppercase and goes to the target area.
-        os.system('cls')
-        print("""MYVET INVOICING SYSTEM\n\nToday's Date: """, date.today(), """\n\nChoose from the following:
-    I - Create Invoice\n    V - View Transaction\n    X - To Exit""")
+        os.system("cls")
+        print("MYVET INVOICING SYSTEM\n\nToday's Date: ", date.today(), "\n\nChoose from the following:\n\tI - Create "
+                                                                        "Invoice\n\tV - View Transaction\n\tX - To "
+                                                                        "Exit")
         while 1:
             main_menu_input = input("Input Option: ")
             main_menu_input = main_menu_input.upper()
@@ -32,7 +34,7 @@ def main():
 
 def create_invoice():
     # This is the form for creating invoices, it collects all the details and puts in the correct format.
-    os.system('cls')
+    os.system("cls")
     return_method = 0
     df = pd.DataFrame()
     print("CREATING CUSTOMER INVOICE")
@@ -84,7 +86,7 @@ def create_invoice():
                     while 1:
                         if return_method == 1:
                             break
-                        os.system('cls')
+                        os.system("cls")
                         if item_amount > 0:
                             print("\n")
                             print("*" * 85)
@@ -181,7 +183,7 @@ def create_invoice():
                                                     "Please enter a lower number")
                                             print(df)
                                             item_remove_input = int(item_remove_input)
-                                            df = df[df['ITEM'] != item_remove_input]
+                                            df.drop(df[(df["ITEM"] == item_remove_input)].index, inplace=True)
                                             print(df)
                                             item_id = item_id - 1
                                             item_amount = item_amount - 1
@@ -194,7 +196,7 @@ def create_invoice():
                                     break
                                 break
                             elif invoice_items_input == "S":
-                                os.system('cls')
+                                os.system("cls")
                                 if item_amount == 0:
                                     print("Error: There are no items to show, Returning to Item Menu...")
                                     time.sleep(2)
@@ -210,7 +212,9 @@ def create_invoice():
                                 print(df[["ITEM", "DESCRIPTION", "QUANTITY", "PRICE", "TOTAL"]].iloc[1:].to_string(
                                     index=False))
                                 print("*" * 85)
-                                print("Subtotal: £{:.2f}\nVAT: £{:.2f}\nInvoice Total: £{:.2f}".format(total_conversion, total_conversion * 0.2, total_conversion * 1.2))
+                                print("Subtotal: £{:.2f}\nVAT: £{:.2f}\nInvoice Total: £{:.2f}".format(total_conversion,
+                                                                                                       total_conversion * 0.2,
+                                                                                                       total_conversion * 1.2))
                                 print("\nChoose from the following:\n\tS - Exit & Save\n\tC - Continue Editing Items")
                                 while 1:
                                     invoice_complete_input = input("Input Option: ")
@@ -230,7 +234,8 @@ def create_invoice():
                                         item_data["VAT"] = item_data["VAT"].map("£{:,.2f}".format)
                                         item_data["INVOICE TOTAL"] = item_data["INVOICE TOTAL"].astype(float)
                                         item_data["INVOICE TOTAL"] = item_data["INVOICE TOTAL"].map("£{:,.2f}".format)
-                                        df = pd.concat([df.iloc[:4], item_data, df.iloc[4:].reset_index(drop=True)], axis=1)
+                                        df = pd.concat([df.iloc[:4], item_data, df.iloc[4:].reset_index(drop=True)],
+                                                       axis=1)
                                         df = df.iloc[:, :12]
                                         if os.path.exists("data.csv") and os.stat("data.csv").st_size != 0:
                                             df_old = pd.read_csv("data.csv")
@@ -258,11 +263,29 @@ def create_invoice():
 
 
 def view_transaction():
+    os.system("cls")
+    if not os.path.exists("data.csv"):
+        print("Error: No Data Found!")
+        print("Returning To Main Menu...")
+        time.sleep(2)
+        return
     print("*" * 85)
     df = pd.read_csv("data.csv")
     print(df[["DATE", "CUSTOMER NAME", "SUBTOTAL", "VAT", "INVOICE TOTAL"]].dropna().to_string(index=False))
     print("*" * 85)
-    input()
+    print("\n\nChoose from the following:\n\tR - Clear Data\n\tX - To Exit Back To Main Menu""")
+    while 1:
+        transaction_menu_input = input("Input Option: ")
+        transaction_menu_input = transaction_menu_input.upper()
+        if transaction_menu_input == "X":
+            break
+        elif transaction_menu_input == "R":
+            os.remove("data.csv")
+            print("Data Successfully Removed!")
+            break
+        else:
+            print("Error: Invalid Input, Please Try Again...")
+
     print("Returning To Main Menu...")
     time.sleep(2)
     return
