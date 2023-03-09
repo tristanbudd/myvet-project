@@ -1,41 +1,46 @@
 # MyVet Invoicing System
 # Tristan Budd
 # 08/03/2023
-# Last Update: Mostly Finished Creating Items
+# Last Update: Creating invoices done
 
 from datetime import date
 import time
 import os
-import math
 import pandas as pd
 
 
 def main():
-    # This is the main menu selection system, Inputs a string, makes uppercase and goes to the target area.
-    os.system('cls')
-    print("""MYVET INVOICING SYSTEM\n\nToday's Date: """, date.today(), """\n\nChoose from the following:
-    I - Create Invoice\n    V - View Transaction\n    X - To Exit""")
     while 1:
-        main_menu_input = input("Input Option: ")
-        main_menu_input = main_menu_input.upper()
-        if main_menu_input == "I":
-            create_invoice()
-        elif main_menu_input == "V":
-            view_transaction()
-        elif main_menu_input == "X":
-            exit()
-        else:
-            print("Error: Invalid Input, Please Try Again...")
+        # This is the main menu selection system, Inputs a string, makes uppercase and goes to the target area.
+        os.system('cls')
+        print("""MYVET INVOICING SYSTEM\n\nToday's Date: """, date.today(), """\n\nChoose from the following:
+    I - Create Invoice\n    V - View Transaction\n    X - To Exit""")
+        while 1:
+            main_menu_input = input("Input Option: ")
+            main_menu_input = main_menu_input.upper()
+            if main_menu_input == "I":
+                create_invoice()
+                break
+            elif main_menu_input == "V":
+                view_transaction()
+                break
+            elif main_menu_input == "X":
+                exit()
+            else:
+                print("Error: Invalid Input, Please Try Again...")
 
 
 def create_invoice():
     # This is the form for creating invoices, it collects all the details and puts in the correct format.
     os.system('cls')
+    return_method = 0
     df = pd.DataFrame()
     print("CREATING CUSTOMER INVOICE")
     customer_name = "Not Set"
     pet_name = "Not Set"
     while 1:
+        if return_method == 1:
+            break
         print("""\nChoose from the following, then save to continue:\n\tC - Customer Name (""", customer_name,
               """)\n\tP - Pet Name (""", pet_name, """)\n\tS - Save & Continue""")
         while 1:
@@ -70,18 +75,21 @@ def create_invoice():
                     item_id = 1
                     item_amount = 0
                     data = {
-                        "Customer Name": customer_name,
-                        "Pet Name": pet_name,
-                        "Date Of Form": date,
+                        "CUSTOMER NAME": customer_name,
+                        "PET NAME": pet_name,
+                        "DATE": date.today(),
                     }
-                    customer_data = pd.DataFrame(data, index = [0])
+                    customer_data = pd.DataFrame(data, index=[0])
                     df = pd.concat([df, customer_data], ignore_index=True, sort=False)
                     while 1:
+                        if return_method == 1:
+                            break
                         os.system('cls')
                         if item_amount > 0:
                             print("\n")
                             print("*" * 85)
-                            print(df[["ITEM", "DESCRIPTION", "QUANTITY", "PRICE", "TOTAL"]].iloc[1:].to_string(index=False))
+                            print(df[["ITEM", "DESCRIPTION", "QUANTITY", "PRICE", "TOTAL"]].iloc[1:].to_string(
+                                index=False))
                             print("*" * 85)
                         print("""\nChoose from the following, then save to continue:\n\tA - Add Item (""", item_amount,
                               """Items )\n\tR - Remove Item\n\tS - Save & Continue""")
@@ -107,31 +115,28 @@ def create_invoice():
                                         if item_quantity_input > 999999:
                                             print("""Error: You can not purchase more than 999999 items, Please Try""",
                                                   """ Again...\nYou could add more separately if you need more room""")
-                                        elif item_quantity_input < 0:
+                                        elif item_quantity_input <= 0:
                                             print("Error: Items Purchased Must Be Greater Than 0, Please Try Again...")
                                         else:
                                             break
                                     else:
                                         print("Error: The Quantity Must Be A Number Input, Please Try Again...")
                                 print("\nWhat is the cost of this item (Per Unit):")
-                                while 1:
+                                while True:
+                                    item_cost_input = input("Item Cost / Unit: ")
                                     try:
-                                        item_cost_input = input("Item Cost / Unit: ")
                                         item_cost_input = float(item_cost_input)
-                                        if item_cost_input.is_integer():
-                                            item_cost_input = int(item_cost_input)
+                                        if item_cost_input > 999999:
+                                            print(
+                                                "Error: Items can not cost more than 999999 per unit, Please Try "
+                                                "Again...\n You could add more separately if you need more room")
+                                        elif item_cost_input <= 0:
+                                            print("Error: Cost Per Unit Must Be Greater Than 0, Please Try Again...")
                                         else:
-                                            item_cost_input = round(item_cost_input, 2)
-                                        break
+                                            break
                                     except ValueError:
-                                        print("Error: Cost Per Unit Must Be A Float Input, Please Try Again...")
-                                    if item_cost_input > 999999:
-                                        print("""Error: Items can not cost more than 999999 per unit, Please Try""",
-                                              """ Again...\nYou could add more separately if you need more room""")
-                                    elif item_cost_input < 0:
-                                        print("Error: Cost Per Unit Must Be Greater Than 0, Please Try Again...")
-                                    else:
-                                        break
+                                        print("Error: Invalid Input, Please Enter A Valid Number Or Float, It Can Not "
+                                              "Be More Than 999999 or Lower or Equal To 0")
                                 # Saving Data to DataFrame
                                 # Item & Quantity are converted to integers to prevent float formatting
                                 data = {
@@ -159,7 +164,7 @@ def create_invoice():
                             elif invoice_items_input == "R":
                                 if item_amount == 0:
                                     print("Error: There are no items to remove, Returning to Item Menu...")
-                                    time.sleep(3)
+                                    time.sleep(2)
                                     break
                                 print("\nEnter which item you would like to remove:")
                                 while 1:
@@ -168,16 +173,20 @@ def create_invoice():
                                         if item_remove_input.isnumeric():
                                             item_remove_input = int(item_remove_input)
                                             if item_remove_input <= 0:
-                                                print("Error: Number must be greater than 0, As there is no items stored here, Please Try Again...")
-                                                break
+                                                print("Error: Number must be greater than 0, As there is no items "
+                                                      "stored here, Please Try Again...")
                                             elif item_remove_input > item_amount:
-                                                print("Error: There is not this many entries, Please enter a lower number")
-                                                break
-                                            df.drop(df[df["ITEM"] == item_remove_input].index)
-                                            # df.loc[df.index > item_remove_input, "ITEM"] = df.loc[df.index > item_remove_input, "ITEM"] - 1
+                                                print(
+                                                    "Error: There is not this many entries, "
+                                                    "Please enter a lower number")
+                                            print(df)
+                                            item_remove_input = int(item_remove_input)
+                                            df = df[df['ITEM'] != item_remove_input]
+                                            print(df)
                                             item_id = item_id - 1
                                             item_amount = item_amount - 1
-                                            print("Sucessfully removed item:", item_remove_input, ", Returning to Item Menu...")
+                                            print("Successfully removed item:", item_remove_input, ", Returning to "
+                                                                                                   "Item Menu...")
                                             time.sleep(2)
                                             break
                                         else:
@@ -188,39 +197,75 @@ def create_invoice():
                                 os.system('cls')
                                 if item_amount == 0:
                                     print("Error: There are no items to show, Returning to Item Menu...")
-                                    time.sleep(3)
+                                    time.sleep(2)
                                     break
                                 total_conversion = pd.Series(df['TOTALRAW'].iloc[1:].sum())
                                 total_conversion = float(total_conversion)
                                 print("*" * 85)
                                 print("\n\nINVOICE\n")
                                 print("*" * 85)
-                                print("\nCustomer: ", df["Customer Name"].loc[df.index[0]], "\n\nPet Name: ", df["Pet Name"].loc[df.index[0]], "\n")
+                                print("\nCustomer: ", df["CUSTOMER NAME"].loc[df.index[0]], "\n\nPet Name: ",
+                                      df["PET NAME"].loc[df.index[0]], "\n")
                                 print("*" * 85)
-                                print(df[["ITEM", "DESCRIPTION", "QUANTITY", "PRICE", "TOTAL"]].iloc[1:].to_string(index=False))
+                                print(df[["ITEM", "DESCRIPTION", "QUANTITY", "PRICE", "TOTAL"]].iloc[1:].to_string(
+                                    index=False))
                                 print("*" * 85)
-                                print("Subtotal: £{:.0f}\nVAT: £{:.0f}\nInvoice Total: £{:.0f}".format(total_conversion, total_conversion * 0.2, total_conversion * 1.2))
-                                print("\nChoose from the following:\n\tX - Exit & Save\n\tC - Continue Editing Items")
+                                print("Subtotal: £{:.2f}\nVAT: £{:.2f}\nInvoice Total: £{:.2f}".format(total_conversion, total_conversion * 0.2, total_conversion * 1.2))
+                                print("\nChoose from the following:\n\tS - Exit & Save\n\tC - Continue Editing Items")
                                 while 1:
                                     invoice_complete_input = input("Input Option: ")
-                                    if invoice_items_input == "X":
+                                    invoice_complete_input = invoice_complete_input.upper()
+                                    if invoice_complete_input == "S":
                                         # Saving data & Returning to Main Menu
-                                        return
-                                    elif invoice_items_input == "C":
+                                        print("Saving Data & Returning To Main Menu...")
+                                        data = {
+                                            "SUBTOTAL": total_conversion,
+                                            "VAT": total_conversion * 0.2,
+                                            "INVOICE TOTAL": total_conversion * 1.2,
+                                        }
+                                        item_data = pd.DataFrame(data, index=[0])
+                                        item_data["SUBTOTAL"] = item_data["SUBTOTAL"].astype(float)
+                                        item_data["SUBTOTAL"] = item_data["SUBTOTAL"].map("£{:,.2f}".format)
+                                        item_data["VAT"] = item_data["VAT"].astype(float)
+                                        item_data["VAT"] = item_data["VAT"].map("£{:,.2f}".format)
+                                        item_data["INVOICE TOTAL"] = item_data["INVOICE TOTAL"].astype(float)
+                                        item_data["INVOICE TOTAL"] = item_data["INVOICE TOTAL"].map("£{:,.2f}".format)
+                                        df = pd.concat([df.iloc[:4], item_data, df.iloc[4:].reset_index(drop=True)], axis=1)
+                                        df = df.iloc[:, :12]
+                                        if os.path.exists("data.csv") and os.stat("data.csv").st_size != 0:
+                                            df_old = pd.read_csv("data.csv")
+                                        else:
+                                            df_old = pd.DataFrame()
+                                        df = pd.concat([df_old, df], ignore_index=True)
+                                        df.to_csv("data.csv", index=False)
+                                        time.sleep(2)
+                                        return_method = 1
+                                        break
+                                    elif invoice_complete_input == "C":
                                         break
                                     else:
                                         print("Error: Invalid Input, Please Try Again...")
+                                break
                             else:
                                 print("Error: Invalid Input, Please Try Again...")
                 else:
                     print("\nError: Ensure you have set both a Customer Name & a Pet Name Before Continuing...")
                     print("Returning to the Basic Information Menu...")
-                    time.sleep(3)
+                    time.sleep(2)
             break
+    if return_method == 1:
+        return
 
 
 def view_transaction():
-    print("test")
+    print("*" * 85)
+    df = pd.read_csv("data.csv")
+    print(df[["DATE", "CUSTOMER NAME", "SUBTOTAL", "VAT", "INVOICE TOTAL"]].iloc[:1].to_string(index=False))
+    print("*" * 85)
+    input()
+    print("Returning To Main Menu...")
+    time.sleep(2)
+    return
 
 
 if __name__ == "__main__":
