@@ -94,7 +94,7 @@ def create_invoice():
                                 index=False))
                             print("*" * 85)
                         print("""\nChoose from the following, then save to continue:\n\tA - Add Item (""", item_amount,
-                              """Items )\n\tR - Remove Item\n\tS - Save & Continue""")
+                              """Items )\n\tS - Save & Continue""")
                         while 1:
                             invoice_items_input = input("Input Option: ")
                             invoice_items_input = invoice_items_input.upper()
@@ -162,38 +162,6 @@ def create_invoice():
                                 df = pd.concat([df, item_data], ignore_index=True)
                                 item_id = item_id + 1
                                 item_amount = item_amount + 1
-                                break
-                            elif invoice_items_input == "R":
-                                if item_amount == 0:
-                                    print("Error: There are no items to remove, Returning to Item Menu...")
-                                    time.sleep(2)
-                                    break
-                                print("\nEnter which item you would like to remove:")
-                                while 1:
-                                    while 1:
-                                        item_remove_input = input("Item ID: ")
-                                        if item_remove_input.isnumeric():
-                                            item_remove_input = int(item_remove_input)
-                                            if item_remove_input <= 0:
-                                                print("Error: Number must be greater than 0, As there is no items "
-                                                      "stored here, Please Try Again...")
-                                            elif item_remove_input > item_amount:
-                                                print(
-                                                    "Error: There is not this many entries, "
-                                                    "Please enter a lower number")
-                                            print(df)
-                                            item_remove_input = int(item_remove_input)
-                                            df.drop(df[(df["ITEM"] == item_remove_input)].index, inplace=True)
-                                            print(df)
-                                            item_id = item_id - 1
-                                            item_amount = item_amount - 1
-                                            print("Successfully removed item:", item_remove_input, ", Returning to "
-                                                                                                   "Item Menu...")
-                                            time.sleep(2)
-                                            break
-                                        else:
-                                            print("Error: This must be a number, Please Try Again...")
-                                    break
                                 break
                             elif invoice_items_input == "S":
                                 os.system("cls")
